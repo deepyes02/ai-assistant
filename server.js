@@ -1,18 +1,57 @@
-const express = require('express')
+const express = require('express');
+const axios = require('axios');
+const path = require('path');
 
-const path = require('path')
-
-const app  = express();
-
-
+const app = express();
 
 const PORT = 3000;
+const aiEndpoint = "http://127.0.0.1:11434/api/generate";
 
+app.use(express.json());
 
-app.get('/', (req,res) => {
-	res.sendFile(path.join(__dirname, 'index.html'))
-})
+// Serve the index.html file on the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
-app.listen(PORT, ()=> {
-	console.log(`Server running at http://localhost:${PORT}`)
-})
+// Handle the /ask-ai POST request
+app.post('/ask-ai', async (req, res) => {
+    if (!req.body) {
+        return res.status(400).json({ message: 0, error: "Sorry, empty request" });
+    }
+
+    if (req.body.model && req.body.prompt) {
+        try {
+            // Make the POST request to the AI endpoint
+            const response = await makePostRequestToAI(req.body);
+            // Send the AI response back to the client
+            res.status(200).json(response.data);
+        } catch (error) {
+            res.status(500).json({ error: "Error making request to AI" });
+        }
+    } else {
+        res.status(400).json({ error: "Model and prompt are required." });
+    }
+});
+
+// Function to make the POST request to the AI endpoint
+async function makePostRequestToAI(userRequest) {
+    const { model, prompt } = userRequest;
+
+    const requestData = {
+        model: model,
+        prompt: prompt,
+    };
+
+    // Make the POST request using Axios
+    return await axios.post(aiEndpoint, requestData, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+}
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});

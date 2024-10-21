@@ -4,8 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <style>
+    *{
+      margin: 0;padding:0;box-sizing: border-box;
+    }
+    #heading{text-align: center;padding: 15px;}
+    #userquery{width: 100%;height: 100px;}
+  </style>
 </head>
 <body>
-  Hello world
+  <div style="width: 100vw;height: 100vh;background: rgb(168, 174, 168);">
+    <h1 id="heading" style>... at your service</h1>
+    <div id="ai-output">
+
+    </div>
+    <form style="padding: 10px;">
+      <div id="ai-input">
+        Hello
+      </div>
+      <textarea name="userquery" id="userquery"></textarea>
+    </form>
+  </div>
+
+
+  <script type="text/javascript">
+
+    const userQuery = document.querySelector('#userquery')
+    const aiOutput = document.querySelector('#ai-output')
+
+    userQuery.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' && e.shiftKey){
+        e.preventDefault();
+        if(userQuery.value){
+          makeThePostRequest(userQuery.value.trim())
+        }
+      }
+    })
+
+    const makeThePostRequest = (input) => {
+      fetch('/ask-ai', {
+        method: 'POST',
+        headers:{
+          'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({
+          "model" : "llama3.2",
+          "prompt" : input
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        aiOutput.innerText = data
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    }
+
+
+    //document.addEventListener('keydown', (e) => { if (e.key === 'Enter') { /* Your code here */ } });
+
+
+
+  </script>
+
+
 </body>
 </html>
