@@ -34,6 +34,19 @@
       height: 600px;
       gap: 10px;
     }
+
+    .ai-response-dialogue-box {
+      width: 94%;
+      display:block;
+      margin: 0 auto;
+      background-color: #6f5a51;
+      font-family: sans-serif;
+      font-size: 18px;
+      line-height: 1.4;
+      color: #fff;
+      padding: 10px;
+
+    }
   </style>
 </head>
 
@@ -66,6 +79,10 @@
     })
 
     const makeThePostRequest = async (model, input) => {
+      const div = document.createElement('div');
+      div.classList.add('ai-response-dialogue-box');
+      const span = document.createElement('span')
+
       try {
         const response = await fetch('/ask-ai', {
           method: 'POST',
@@ -79,6 +96,7 @@
         });
         if (!response.ok) { throw new Error('Sorry response is not okay') }
         // 
+        aiOutput.appendChild(div)
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let partialChunk = '';
@@ -91,17 +109,14 @@
           const lines = partialChunk.split('\n');
           partialChunk = lines.pop(); //uproot the latest 
 
-          // console.log(lines)
 
           //create a div and append
-          const div = document.createElement('div');
-          const span = document.createElement('span')
 
           lines.forEach(line => {
             if (line.trim()) {
               try {
-                const jsonResponse = JSON.parse(line)
-                displayResponse(jsonResponse.response)
+                const data = JSON.parse(line)
+                displayResponse(data, div)
               } catch (error) { console.error('error ', line, error) }
             }
           })
@@ -111,7 +126,15 @@
       catch (error) {
         console.log(error)
       }
+
+      function displayResponse(data, htmlResponseDiv) {
+        const span = document.createElement('span');
+        span.innerText = data.response;
+        htmlResponseDiv.appendChild(span)
+        console.log(data.response)
+      }
     }
+
 
   </script>
 
