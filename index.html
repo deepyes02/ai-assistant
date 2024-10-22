@@ -51,24 +51,25 @@
       }
     })
 
-    const makeThePostRequest = (input) => {
-      fetch('/ask-ai', {
+    const makeThePostRequest = async (input) => {
+      const decoder = new TextDecoder('utf-8')
+      let buffer = '';
+        await fetch('/ask-ai', {
         method: 'POST',
         headers:{
-          'Content-Type' : 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           "model" : "llama3.2",
           "prompt" : input
         })
       })
-      .then(res => res.json())
+      .then(res => {
+        console.log(res)
+        return res.json()
+      })
       .then(data => {
-        // aiOutput.innerText = data
-        // create a div element and append it to the aiOutput field
-        appendResponseToOutputField(data)
-
-
+        console.log(data)
       })
       .catch(error => {
         console.log(error)
