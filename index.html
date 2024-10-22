@@ -28,22 +28,42 @@
       position: fixed;
       width: 100vw;
       bottom: 0;
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      background: #143c418c;
+
+      >button {
+        border:none;
+        background:#00000080;
+        border-radius: 50%;
+        height: 50px;
+        width: 50px;
+        line-height: 0;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        & svg {
+          width: 100%;
+          height: auto;
+          max-width: 30px;
+          fill: white;
+        }
+      }
     }
 
-    #ai-output {
-      height: 600px;
-      gap: 10px;
-    }
 
     .ai-response-dialogue-box {
       width: 94%;
-      display:block;
+      display: block;
       margin: 20px auto;
-      background-color: #6f5a51;
+      background-color: #3d655d40;
       font-family: sans-serif;
       font-size: 18px;
       line-height: 1.4;
-      color: #fff;
+      color: #000;
       padding: 10px;
 
     }
@@ -57,26 +77,51 @@
 
     </div>
     <form id="userInputArea" style="padding: 10px;">
-      <div>
-        Hello
-      </div>
+      <button id="sendQueryButton">
+        <svg fill="#fff" height="40px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve">
+          <path id="XMLID_224_"
+            d="M325.606,229.393l-150.004-150C172.79,76.58,168.974,75,164.996,75c-3.979,0-7.794,1.581-10.607,4.394
+	l-149.996,150c-5.858,5.858-5.858,15.355,0,21.213c5.857,5.857,15.355,5.858,21.213,0l139.39-139.393l139.397,139.393
+	C307.322,253.536,311.161,255,315,255c3.839,0,7.678-1.464,10.607-4.394C331.464,244.748,331.464,235.251,325.606,229.393z" />
+        </svg>
+      </button>
       <textarea name="userquery" id="userquery"></textarea>
     </form>
   </div>
-
 
   <script type="text/javascript">
 
     const userQuery = document.querySelector('#userquery')
     const aiOutput = document.querySelector('#ai-output')
-    userQuery.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.shiftKey) {
+    const sendQueryButton = document.querySelector('#sendQueryButton');
+    const modelName = 'llama3.2'
+
+    const clearInputField = () => userQuery.value = '';
+
+
+    const userQuerySendFunction = (e) => {
+      if (e.key === 'Enter' && e.shiftKey && e.type === "keydown") {
         e.preventDefault();
         if (userQuery.value) {
-          makeThePostRequest('llama3.2', userQuery.value.trim())
+          makeThePostRequest(modelName, userQuery.value.trim())
+          clearInputField()
         }
+      } else if (e.type === "click") {
+        e.preventDefault();
+        if (userQuery.value) {
+          makeThePostRequest(modelName, userQuery.value.trim())
+          clearInputField()
+        }
+
       }
-    })
+
+    }
+
+
+    userQuery.addEventListener('keydown', userQuerySendFunction);
+    sendQueryButton.addEventListener('click', userQuerySendFunction);
+
 
     const makeThePostRequest = async (model, input) => {
       const div = document.createElement('div');
@@ -131,7 +176,7 @@
         const span = document.createElement('span');
         span.innerText = data.response;
         htmlResponseDiv.appendChild(span)
-        console.log(data.response)
+        console.log(data)
       }
     }
 
