@@ -66,20 +66,9 @@ async function makePostRequestToAI(userRequest, clientRes) {
 	}
 
 	clientRes.end();
-
-
-
-
-
-	// // Make the POST request using Axios
-	// return await axios.post(aiEndpoint, requestData, {
-	//     headers: {
-	//         "Content-Type": "application/json",
-	//     },
-	// });
 }
 
 // Start the server
 app.listen(PORT, () => {
-	console.log(`Server running at http://localhost:${PORT}`);
+	console.log(`AI Server running at http://localhost:${PORT}`);
 });
