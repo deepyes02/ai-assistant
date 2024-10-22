@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
+const firebaseServiceProvider = require('./service-firebase.js')
 
+// console.log(firebaseServiceProvider)
 const app = express();
 
 const PORT = 80;
